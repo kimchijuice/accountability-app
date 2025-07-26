@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Accountability</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Daily Progress</h1>
+            <p>Keep building, keep growing</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-number" id="totalXP">1,247</span>
+                <span class="stat-label">Total XP</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="longestStreak">12</span>
+                <span class="stat-label">Best Streak</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="completedProjects">3</span>
+                <span class="stat-label">Completed</span>
+            </div>
+        </div>
+
+        <div class="projects">
+            <div class="projects-header">
+                <h3>Active Projects</h3>
+                <button class="btn btn-primary" onclick="startNewProject()">+ New Project</button>
+            </div>
+            
+            <div class="project active" data-project="ecommerce">
+                <div class="project-header">
+                    <div class="project-name">🛒 E-commerce Site</div>
+                    <div class="project-streak">🔥 7 days</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+                <div class="project-actions">
+                    <button class="btn btn-primary" onclick="startSession('ecommerce')">Start Session</button>
+                    <button class="btn btn-success" onclick="checkOut('ecommerce')">Check Out</button>
+                </div>
+            </div>
+
+            <div class="project" data-project="python">
+                <div class="project-header">
+                    <div class="project-name">🐍 Python Automation</div>
+                    <div class="project-streak">🔥 3 days</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%"></div>
+                </div>
+                <div class="project-actions">
+                    <button class="btn btn-primary" onclick="startSession('python')">Start Session</button>
+                    <button class="btn btn-success" onclick="checkOut('python')">Check Out</button>
+                </div>
+            </div>
+
+            <div class="project" data-project="fitness">
+                <div class="project-header">
+                    <div class="project-name">💪 Fitness Journey</div>
+                    <div class="project-streak">🔥 15 days</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%"></div>
+                </div>
+                <div class="project-actions">
+                    <button class="btn btn-primary" onclick="startSession('fitness')">Start Session</button>
+                    <button class="btn btn-success" onclick="checkOut('fitness')">Check Out</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stickers">
+            <h3>🎨 My Scrapbook Page</h3>
+            <div class="scrapbook-preview">
+                <div class="scrapbook-canvas" id="scrapbookCanvas">
+                    <div class="placed-sticker" style="top: 20px; left: 30px;">🌸</div>
+                    <div class="placed-sticker" style="top: 80px; right: 40px;">⭐</div>
+                    <div class="placed-sticker" style="bottom: 30px; left: 50px;">🎯</div>
+                    <div class="page-text" style="top: 50px; left: 120px;">My Projects 2025</div>
+                </div>
+            </div>
+            <div class="sticker-actions">
+                <button class="btn btn-primary" onclick="openDesignMode()">✨ Design Page</button>
+                <button class="btn" onclick="viewCollection()">📦 Sticker Collection</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Project Setup Modal -->
+    <div class="modal" id="newProjectModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <!-- Step 1: Project Basics -->
+            <div id="step1" class="setup-step">
+                <div class="step-header">
+                    <h3>🚀 Start New Project</h3>
+                    <div class="step-indicator">Step 1 of 4</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>What project are you starting?</label>
+                    <input type="text" id="projectName" placeholder="e.g., Learn React, Build a portfolio, Write a book">
+                </div>
+                
+                <div class="form-group">
+                    <label>Project category</label>
+                    <select id="projectCategory">
+                        <option value="">Select category...</option>
+                        <option value="coding">💻 Coding & Development</option>
+                        <option value="creative">🎨 Creative & Design</option>
+                        <option value="learning">📚 Learning & Study</option>
+                        <option value="fitness">💪 Health & Fitness</option>
+                        <option value="business">💼 Business & Career</option>
+                        <option value="personal">🌱 Personal Development</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+                    <button class="btn" onclick="closeNewProject()">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Time Commitment -->
+            <div id="step2" class="setup-step" style="display: none;">
+                <div class="step-header">
+                    <h3>⏰ Time Planning</h3>
+                    <div class="step-indicator">Step 2 of 4</div>
+                </div>
+                
+                <div class="ai-question">
+                    <h4>Claude asks:</h4>
+                    <p id="timeQuestion">How long do you realistically think this project will take to complete? Think about similar projects you've done before.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Estimated total duration</label>
+                    <select id="projectDuration">
+                        <option value="">Select duration...</option>
+                        <option value="1-2weeks">1-2 weeks</option>
+                        <option value="1month">1 month</option>
+                        <option value="2-3months">2-3 months</option>
+                        <option value="6months">6 months</option>
+                        <option value="1year">1 year+</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Daily time commitment</label>
+                    <select id="dailyHours">
+                        <option value="">How much time per day?</option>
+                        <option value="30min">30 minutes</option>
+                        <option value="1hour">1 hour</option>
+                        <option value="2hours">2 hours</option>
+                        <option value="3hours">3+ hours</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn" onclick="prevStep(1)">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Schedule Integration -->
+            <div id="step3" class="setup-step" style="display: none;">
+                <div class="step-header">
+                    <h3>📅 Smart Scheduling</h3>
+                    <div class="step-indicator">Step 3 of 4</div>
+                </div>
+                
+                <div class="calendar-analysis">
+                    <div class="analysis-header">
+                        <div class="loading-spinner">🔄</div>
+                        <p>Analyzing your Google Calendar...</p>
+                    </div>
+                    
+                    <div id="calendarResults" style="display: none;">
+                        <div class="ai-question">
+                            <h4>Claude's Schedule Analysis:</h4>
+                            <p id="scheduleAnalysis">I found some great time slots for your project! Based on your calendar, you're typically free:</p>
+                        </div>
+                        
+                        <div class="suggested-slots">
+                            <h4>Suggested Time Slots:</h4>
+                            <div class="time-slot">
+                                <input type="checkbox" id="slot1" checked>
+                                <label for="slot1">
+                                    <strong>Tuesday & Thursday, 7:00-9:00 PM</strong>
+                                    <span class="slot-details">2 hours • Consistently free</span>
+                                </label>
+                            </div>
+                            <div class="time-slot">
+                                <input type="checkbox" id="slot2" checked>
+                                <label for="slot2">
+                                    <strong>Saturday Morning, 9:00-11:00 AM</strong>
+                                    <span class="slot-details">2 hours • Weekend focus time</span>
+                                </label>
+                            </div>
+                            <div class="time-slot">
+                                <input type="checkbox" id="slot3">
+                                <label for="slot3">
+                                    <strong>Wednesday, 6:00-7:00 AM</strong>
+                                    <span class="slot-details">1 hour • Early morning slot</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="weekly-commitment">
+                            <p><strong>Total weekly commitment:</strong> <span id="totalHours">6 hours</span></p>
+                            <p class="commitment-note">This matches your goal of 1 hour per day!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn" onclick="prevStep(2)">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep(4)" id="scheduleNext" disabled>Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Final Setup -->
+            <div id="step4" class="setup-step" style="display: none;">
+                <div class="step-header">
+                    <h3>✨ Final Setup</h3>
+                    <div class="step-indicator">Step 4 of 4</div>
+                </div>
+                
+                <div class="ai-question">
+                    <h4>Claude asks:</h4>
+                    <p id="integrationQuestion">How can we help you stick to this project? What usually derails your progress?</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>What's your biggest challenge with projects like this?</label>
+                    <textarea id="challenges" placeholder="e.g., I lose motivation after a few days, I get distracted by other priorities..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reminder preferences</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" checked> Calendar notifications 15 min before</label>
+                        <label><input type="checkbox" checked> Daily progress check-ins</label>
+                        <label><input type="checkbox"> Weekly progress reports</label>
+                        <label><input type="checkbox"> Streak break warnings</label>
+                    </div>
+                </div>
+                
+                <div class="project-summary">
+                    <h4>📋 Project Summary</h4>
+                    <div class="summary-item">
+                        <strong>Project:</strong> <span id="summaryName">Learn React</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Duration:</strong> <span id="summaryDuration">2-3 months</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Schedule:</strong> <span id="summarySchedule">6 hours/week</span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Reward:</strong> <span id="summaryReward">💻 Developer Sticker Pack</span>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn" onclick="prevStep(3)">← Back</button>
+                    <button class="btn btn-success" onclick="createProject()">🚀 Create Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Creation Success -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="celebration">
+                <div class="emoji">🎉</div>
+                <h3>Project Created!</h3>
+                <p>Your schedule has been added to Google Calendar</p>
+                <div class="success-details">
+                    <p>✅ Calendar events created</p>
+                    <p>✅ Daily reminders set</p>
+                    <p>✅ Progress tracking activated</p>
+                </div>
+                <button class="btn btn-success" onclick="closeSuccess()">Start Building!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticker Collection Modal -->
+    <div class="modal" id="collectionModal">
+        <div class="modal-content">
+            <h3>📦 My Sticker Collection</h3>
+            <div class="collection-tabs">
+                <button class="tab-btn active" onclick="showTab('available')">Available</button>
+                <button class="tab-btn" onclick="showTab('locked')">Locked</button>
+            </div>
+            
+            <div id="availableTab" class="tab-content">
+                <div class="sticker-pack">
+                    <h4>🌸 Nature Pack</h4>
+                    <p class="pack-info">Unlocked: Completed "Fitness Journey"</p>
+                    <div class="sticker-grid">
+                        <div class="available-sticker" onclick="selectSticker('🌸')">🌸</div>
+                        <div class="available-sticker" onclick="selectSticker('🌿')">🌿</div>
+                        <div class="available-sticker" onclick="selectSticker('🌻')">🌻</div>
+                        <div class="available-sticker" onclick="selectSticker('🦋')">🦋</div>
+                    </div>
+                </div>
+                
+                <div class="sticker-pack">
+                    <h4>⭐ Achievement Pack</h4>
+                    <p class="pack-info">Unlocked: Completed "E-commerce Site"</p>
+                    <div class="sticker-grid">
+                        <div class="available-sticker" onclick="selectSticker('⭐')">⭐</div>
+                        <div class="available-sticker" onclick="selectSticker('🎯')">🎯</div>
+                        <div class="available-sticker" onclick="selectSticker('🏆')">🏆</div>
+                        <div class="available-sticker" onclick="selectSticker('💎')">💎</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="lockedTab" class="tab-content" style="display: none;">
+                <div class="sticker-pack locked-pack">
+                    <h4>🚀 Space Pack</h4>
+                    <p class="pack-info">Complete "Python Automation" to unlock</p>
+                    <div class="sticker-grid">
+                        <div class="locked-sticker">🚀</div>
+                        <div class="locked-sticker">🌟</div>
+                        <div class="locked-sticker">🛸</div>
+                        <div class="locked-sticker">🌙</div>
+                    </div>
+                </div>
+                
+                <div class="sticker-pack locked-pack">
+                    <h4>🎨 Art Pack</h4>
+                    <p class="pack-info">Start an art/design project to unlock</p>
+                    <div class="sticker-grid">
+                        <div class="locked-sticker">🎨</div>
+                        <div class="locked-sticker">🖌️</div>
+                        <div class="locked-sticker">🎭</div>
+                        <div class="locked-sticker">🌈</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="closeCollection()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Mode Modal -->
+    <div class="modal" id="designModal">
+        <div class="modal-content" style="max-width: 90%; width: 500px;">
+            <h3>✨ Design Your Page</h3>
+            <div class="design-workspace">
+                <div class="canvas-area">
+                    <div class="scrapbook-canvas" id="designCanvas">
+                        <div class="placed-sticker" style="top: 20px; left: 30px;">🌸</div>
+                        <div class="placed-sticker" style="top: 80px; right: 40px;">⭐</div>
+                        <div class="placed-sticker" style="bottom: 30px; left: 50px;">🎯</div>
+                        <div class="page-text" style="top: 50px; left: 120px;">My Projects 2025</div>
+                    </div>
+                </div>
+                <div class="design-tools">
+                    <h4>Available Stickers:</h4>
+                    <div class="tool-stickers">
+                        <div class="tool-sticker" onclick="addSticker('🌸')">🌸</div>
+                        <div class="tool-sticker" onclick="addSticker('🌿')">🌿</div>
+                        <div class="tool-sticker" onclick="addSticker('⭐')">⭐</div>
+                        <div class="tool-sticker" onclick="addSticker('🎯')">🎯</div>
+                        <div class="tool-sticker" onclick="addSticker('🏆')">🏆</div>
+                        <div class="tool-sticker" onclick="addSticker('💎')">💎</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addText()">+ Add Text</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="saveDesign()">Save Page</button>
+                <button class="btn" onclick="closeDesign()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-out Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <div id="questionPhase">
+                <h3>📝 Quick Reflection</h3>
+                <div class="ai-question">
+                    <h4>Claude asks:</h4>
+                    <p id="aiQuestion">Loading your personalized question...</p>
+                </div>
+                <textarea id="userResponse" placeholder="Share your thoughts..."></textarea>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="submitResponse()">Submit & Complete</button>
+                    <button class="btn" onclick="closeModal()">Skip Today</button>
+                </div>
+            </div>
+
+            <div id="celebrationPhase" style="display: none;">
+                <div class="celebration">
+                    <div class="emoji">🎉</div>
+                    <h3>Awesome work today!</h3>
+                    <p>Your consistency is paying off</p>
+                    <div class="xp-gained">+25 XP Earned!</div>
+                    <button class="btn btn-success" onclick="closeModal()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
