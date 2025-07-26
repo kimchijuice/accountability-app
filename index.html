@@ -153,9 +153,22 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Daily time commitment</label>
-                    <select id="dailyHours">
-                        <option value="">How much time per day?</option>
+                    <label>Days per week commitment</label>
+                    <select id="weeklyDays">
+                        <option value="">How many days per week?</option>
+                        <option value="2days">2 days per week</option>
+                        <option value="3days">3 days per week</option>
+                        <option value="4days">4 days per week</option>
+                        <option value="5days">5 days per week</option>
+                        <option value="6days">6 days per week</option>
+                        <option value="daily">Daily (7 days)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Time per session</label>
+                    <select id="sessionHours">
+                        <option value="">How long per session?</option>
                         <option value="30min">30 minutes</option>
                         <option value="1hour">1 hour</option>
                         <option value="2hours">2 hours</option>
@@ -176,7 +189,23 @@
                     <div class="step-indicator">Step 3 of 4</div>
                 </div>
                 
-                <div class="calendar-analysis">
+                <div class="calendar-prompt">
+                    <div class="ai-question">
+                        <h4>Claude suggests:</h4>
+                        <p>I can analyze your Google Calendar to find the perfect time slots that actually work with your schedule. This helps you stick to your commitment!</p>
+                    </div>
+                    
+                    <div class="privacy-note">
+                        <p><strong>🔒 Your privacy matters:</strong> We only read your availability, never calendar content. Your data stays secure and is never shared.</p>
+                    </div>
+                    
+                    <div class="calendar-options">
+                        <button class="btn btn-primary" onclick="connectCalendar()">📅 Connect Google Calendar</button>
+                        <button class="btn" onclick="manualScheduling()">⏰ Set My Own Times</button>
+                    </div>
+                </div>
+                
+                <div class="calendar-analysis" id="calendarAnalysis" style="display: none;">
                     <div class="analysis-header">
                         <div class="loading-spinner">🔄</div>
                         <p>Analyzing your Google Calendar...</p>
@@ -213,10 +242,48 @@
                             </div>
                         </div>
                         
+                        <div class="scheduling-actions">
+                            <button class="btn btn-secondary" onclick="manualScheduling()">⏰ Set My Own Times Instead</button>
+                        </div>
+                        
                         <div class="weekly-commitment">
                             <p><strong>Total weekly commitment:</strong> <span id="totalHours">6 hours</span></p>
-                            <p class="commitment-note">This matches your goal of 1 hour per day!</p>
+                            <p class="commitment-note" id="commitmentNote">This matches your goal!</p>
                         </div>
+                    </div>
+                </div>
+                
+                <div class="manual-scheduling" id="manualScheduling" style="display: none;">
+                    <div class="ai-question">
+                        <h4>Choose Your Schedule:</h4>
+                        <p>Set times that work best for you. You can always adjust these later!</p>
+                    </div>
+                    
+                    <div class="manual-slots">
+                        <h4>Add Your Time Slots:</h4>
+                        <div id="manualSlots">
+                            <div class="manual-slot">
+                                <select class="day-select">
+                                    <option value="">Select day...</option>
+                                    <option value="monday">Monday</option>
+                                    <option value="tuesday">Tuesday</option>
+                                    <option value="wednesday">Wednesday</option>
+                                    <option value="thursday">Thursday</option>
+                                    <option value="friday">Friday</option>
+                                    <option value="saturday">Saturday</option>
+                                    <option value="sunday">Sunday</option>
+                                </select>
+                                <input type="time" class="time-input" placeholder="Start time">
+                                <span class="time-separator">to</span>
+                                <input type="time" class="time-input" placeholder="End time">
+                                <button class="btn-remove" onclick="removeSlot(this)">×</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="addTimeSlot()">+ Add Another Slot</button>
+                    </div>
+                    
+                    <div class="weekly-commitment">
+                        <p><strong>Weekly goal:</strong> <span id="manualGoal">Based on your selections</span></p>
                     </div>
                 </div>
                 

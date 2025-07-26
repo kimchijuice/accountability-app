@@ -623,6 +623,103 @@ textarea:focus {
     margin-bottom: 15px;
 }
 
-.tool-sticker {
-    font-size: 20px;
+.calendar-prompt {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.privacy-note {
+    background: #e8f5e8;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 15px 0;
+    font-size: 14px;
+    border-left: 4px solid #4CAF50;
+}
+
+.calendar-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.scheduling-actions {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #666;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: #e8e8e8;
+    border-color: #ccc;
+}
+
+.manual-scheduling {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.manual-slots h4 {
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.manual-slot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+.day-select, .time-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.day-select {
+    flex: 2;
+}
+
+.time-input {
+    flex: 1;
+}
+
+.time-separator {
+    color: #666;
+    font-size: 14px;
+}
+
+.btn-remove {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-remove:hover {
+    background: #ff5252;
 }

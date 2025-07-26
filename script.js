@@ -81,9 +81,20 @@ function validateCurrentStep() {
             break;
         case 2:
             const duration = document.getElementById('projectDuration').value;
-            const hours = document.getElementById('dailyHours').value;
-            if (!duration || !hours) {
-                alert('Please select your time commitments');
+            const weeklyDays = document.getElementById('weeklyDays').value;
+            const sessionHours = document.getElementById('sessionHours').value;
+            if (!duration || !weeklyDays || !sessionHours) {
+                alert('Please complete all time commitment fields');
+                return false;
+            }
+            break;
+        case 3:
+            // Check if user has selected time slots or created manual schedule
+            const hasSelectedSlots = document.querySelectorAll('.time-slot input:checked').length > 0;
+            const hasManualSlots = document.querySelectorAll('.manual-slot .day-select').length > 0 && 
+                                  document.querySelector('.manual-slot .day-select').value !== '';
+            if (!hasSelectedSlots && !hasManualSlots) {
+                alert('Please select time slots or create your schedule');
                 return false;
             }
             break;
@@ -102,14 +113,28 @@ function saveStepData() {
             break;
         case 2:
             projectData.duration = document.getElementById('projectDuration').value;
-            projectData.dailyHours = document.getElementById('dailyHours').value;
+            projectData.weeklyDays = document.getElementById('weeklyDays').value;
+            projectData.sessionHours = document.getElementById('sessionHours').value;
             break;
         case 3:
-            // Save selected time slots
+            // Save selected time slots or manual schedule
             projectData.timeSlots = [];
+            
+            // Check for calendar-suggested slots
             document.querySelectorAll('.time-slot input:checked').forEach(checkbox => {
                 const label = checkbox.nextElementSibling;
                 projectData.timeSlots.push(label.querySelector('strong').textContent);
+            });
+            
+            // Check for manual slots
+            document.querySelectorAll('.manual-slot').forEach(slot => {
+                const day = slot.querySelector('.day-select').value;
+                const startTime = slot.querySelector('.time-input').value;
+                const endTime = slot.querySelectorAll('.time-input')[1].value;
+                
+                if (day && startTime && endTime) {
+                    projectData.timeSlots.push(`${day} ${startTime}-${endTime}`);
+                }
             });
             break;
     }
@@ -118,12 +143,12 @@ function saveStepData() {
 function updateTimeQuestion() {
     const category = projectData.category;
     const questions = {
-        coding: "Coding projects often take longer than expected due to debugging and learning curves. Based on similar projects, what's a realistic timeline?",
-        creative: "Creative projects can vary wildly in scope. Are you aiming for a quick prototype or a polished final piece?",
-        learning: "Learning projects work best with consistent daily practice. How much new information can you realistically absorb per day?",
-        fitness: "Fitness goals need time for your body to adapt. What's a sustainable pace that won't lead to burnout?",
-        business: "Business projects often depend on external factors. What parts are fully within your control?",
-        personal: "Personal development works best with small, consistent steps. What daily habits would move you forward?"
+        coding: "Coding projects work best with consistent practice. Some people code daily, others prefer 3-4 focused sessions per week. What rhythm feels sustainable for you?",
+        creative: "Creative projects can vary - some need daily practice (like writing), others work better with longer, spaced sessions. What feels right for this project?",
+        learning: "Learning retention improves with regular review. Consider your learning style - do you absorb better with daily short sessions or fewer, longer study blocks?",
+        fitness: "Fitness goals depend on recovery time. Most experts recommend 3-5 sessions per week with rest days. What feels challenging but sustainable?",
+        business: "Business projects often need momentum without burnout. Consider your energy levels and other commitments. What schedule will you actually stick to?",
+        personal: "Personal development works best when it fits naturally into your life. Think about when you're most motivated and have mental energy."
     };
     
     document.getElementById('timeQuestion').textContent = questions[category] || questions.learning;
@@ -141,7 +166,67 @@ function simulateCalendarAnalysis() {
     }, 2000);
 }
 
-function updateScheduleAnalysis() {
+// Calendar Integration Functions
+function connectCalendar() {
+    // Show calendar analysis section
+    document.querySelector('.calendar-prompt').style.display = 'none';
+    document.getElementById('calendarAnalysis').style.display = 'block';
+    
+    // Simulate calendar analysis
+    setTimeout(() => {
+        document.querySelector('.analysis-header').style.display = 'none';
+        document.getElementById('calendarResults').style.display = 'block';
+        document.getElementById('scheduleNext').disabled = false;
+        
+        // Update schedule analysis based on project data
+        updateScheduleAnalysis();
+    }, 2000);
+}
+
+function manualScheduling() {
+    // Hide other sections and show manual scheduling
+    document.querySelector('.calendar-prompt').style.display = 'none';
+    document.getElementById('calendarAnalysis').style.display = 'none';
+    document.getElementById('manualScheduling').style.display = 'block';
+    document.getElementById('scheduleNext').disabled = false;
+    
+    // Update manual goal display
+    updateManualGoal();
+}
+
+function addTimeSlot() {
+    const manualSlots = document.getElementById('manualSlots');
+    const newSlot = document.createElement('div');
+    newSlot.className = 'manual-slot';
+    newSlot.innerHTML = `
+        <select class="day-select">
+            <option value="">Select day...</option>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+        </select>
+        <input type="time" class="time-input" placeholder="Start time">
+        <span class="time-separator">to</span>
+        <input type="time" class="time-input" placeholder="End time">
+        <button class="btn-remove" onclick="removeSlot(this)">×</button>
+    `;
+    manualSlots.appendChild(newSlot);
+}
+
+function removeSlot(button) {
+    button.parentElement.remove();
+    updateManualGoal();
+}
+
+function updateManualGoal() {
+    const weeklyDays = projectData.weeklyDays || "your chosen frequency";
+    const sessionHours = projectData.sessionHours || "your session length";
+    document.getElementById('manualGoal').textContent = `${weeklyDays} at ${sessionHours} each`;
+}
     const category = projectData.category;
     const dailyHours = projectData.dailyHours;
     
@@ -158,7 +243,7 @@ function updateScheduleAnalysis() {
     
     // Update integration question for step 4
     updateIntegrationQuestion();
-}
+
 
 function updateIntegrationQuestion() {
     const category = projectData.category;
@@ -177,7 +262,19 @@ function updateIntegrationQuestion() {
 function updateProjectSummary() {
     document.getElementById('summaryName').textContent = projectData.name;
     document.getElementById('summaryDuration').textContent = projectData.duration;
-    document.getElementById('summarySchedule').textContent = `${projectData.timeSlots.length} time slots/week`;
+    
+    // Create more descriptive schedule summary
+    const weeklyText = {
+        "2days": "2 sessions/week",
+        "3days": "3 sessions/week", 
+        "4days": "4 sessions/week",
+        "5days": "5 sessions/week",
+        "6days": "6 sessions/week",
+        "daily": "Daily practice"
+    };
+    
+    const scheduleText = `${weeklyText[projectData.weeklyDays]} • ${projectData.sessionHours} each`;
+    document.getElementById('summarySchedule').textContent = scheduleText;
     
     // Set reward based on category
     const rewards = {
